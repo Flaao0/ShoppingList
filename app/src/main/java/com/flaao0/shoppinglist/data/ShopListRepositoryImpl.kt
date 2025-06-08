@@ -7,13 +7,13 @@ import com.flaao0.shoppinglist.domain.ShopListRepository
 
 object ShopListRepositoryImpl : ShopListRepository {
 
-    private val shopList = mutableListOf<ShopItem>()
+    private val shopList = sortedSetOf<ShopItem>({o1, o2 -> o1.id.compareTo(o2.id) })
     private val shopListLD = MutableLiveData<List<ShopItem>>()
 
     private var autoGenerateId = 0
 
     init {
-        for (i in 0 until 5) {
+        for (i in 0 until 10) {
             val shopItem = ShopItem("Name$i", i, true)
             addShopItem(shopItem)
         }
