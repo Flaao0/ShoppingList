@@ -1,8 +1,13 @@
 package com.flaao0.shoppinglist.domain
 
 data class ShopItem(
-    val id: Int,
     val name: String,
     val count: Int,
-    val condition: Boolean
-)
+    val condition: Boolean,
+    var id: Int = UNDEFINED_ID
+) {
+
+    companion object {
+        const val UNDEFINED_ID = -1
+    }
+}
