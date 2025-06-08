@@ -1,16 +1,26 @@
 package com.flaao0.shoppinglist.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.flaao0.shoppinglist.domain.ShopItem
 import com.flaao0.shoppinglist.domain.ShopListRepository
 
 object ShopListRepositoryImpl : ShopListRepository {
 
     private val shopList = mutableListOf<ShopItem>()
+    private val shopListLD = MutableLiveData<List<ShopItem>>()
 
     private var autoGenerateId = 0
 
-    override fun getShopList(): List<ShopItem> {
-        return shopList.toList()
+    init {
+        for (i in 0 until 5) {
+            val shopItem = ShopItem("Name$i", i, true)
+            addShopItem(shopItem)
+        }
+    }
+
+    override fun getShopList(): LiveData<List<ShopItem>> {
+        return shopListLD
     }
 
     override fun addShopItem(shopItem: ShopItem) {
@@ -18,10 +28,12 @@ object ShopListRepositoryImpl : ShopListRepository {
             shopItem.id = autoGenerateId++
         }
         shopList.add(shopItem)
+        shopListLD.value = shopList.toList()
     }
 
     override fun deleteShopItem(shopItem: ShopItem) {
         shopList.remove(shopItem)
+        shopListLD.value = shopList.toList()
     }
 
     override fun getShopItemById(id: Int): ShopItem {
@@ -35,5 +47,6 @@ object ShopListRepositoryImpl : ShopListRepository {
         val oldShopItem = getShopItemById(shopItem.id)
         shopList.remove(oldShopItem)
         shopList.add(shopItem)
+        shopListLD.value = shopList.toList()
     }
 }
