@@ -27,7 +27,7 @@ object ShopListRepositoryImpl : ShopListRepository {
     override fun getShopItemById(id: Int): ShopItem {
          val shopItem = shopList.find {
             it.id == id
-        } ?: throw NullPointerException("Element id = null")
+        } ?: throw NullPointerException("Element id = null1")
         return shopItem
     }
 
