@@ -10,13 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
 import com.flaao0.shoppinglist.domain.ShopItem
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var llShopItem: LinearLayout
+    private lateinit var adapter: ShopItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,40 +29,23 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        llShopItem = findViewById(R.id.llShopList)
+        setupRecyclerView()
+
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
-            showItems(it)
             Log.d("MainActivity1", it.toString())
+            adapter.list = it
         }
 
 
     }
 
-    private fun showItems(list: List<ShopItem>) {
-        llShopItem.removeAllViews()
-        for (shopItem in list) {
-            val inflateId = if (shopItem.condition) {
-                R.layout.shop_item_enabled
-            } else {
-                R.layout.shop_item_disabled
-            }
-            val view = LayoutInflater.from(this).inflate(
-                inflateId,
-                llShopItem,
-                false
-            )
-            val textViewDescriptor: TextView = view.findViewById(R.id.textViewDescription)
-            val textViewCount: TextView = view.findViewById(R.id.textViewCount)
-            textViewDescriptor.text = shopItem.name
-            textViewCount.text = shopItem.count.toString()
-            view.setOnLongClickListener {
-                viewModel.changeConditionShopItem(shopItem)
-                true
-            }
-            llShopItem.addView(view)
-        }
+    private fun setupRecyclerView() {
+        val rvShopList = findViewById<RecyclerView>(R.id.recyclerViewShopItem)
+        adapter = ShopItemAdapter()
+        rvShopList.adapter = adapter
     }
+
 
 }
