@@ -43,8 +43,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         val rvShopList = findViewById<RecyclerView>(R.id.recyclerViewShopItem)
-        adapter = ShopItemAdapter()
-        rvShopList.adapter = adapter
+        with (rvShopList) {
+            adapter = ShopItemAdapter()
+            this.adapter = adapter
+            recycledViewPool.setMaxRecycledViews(
+                ShopItemAdapter.IS_ENABLED,
+                ShopItemAdapter.MAX_POOL_SIZE
+            )
+            recycledViewPool.setMaxRecycledViews(
+                ShopItemAdapter.IS_DISABLED,
+                ShopItemAdapter.MAX_POOL_SIZE
+            )
+        }
+
     }
 
 
