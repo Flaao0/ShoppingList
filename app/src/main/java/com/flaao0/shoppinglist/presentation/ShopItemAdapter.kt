@@ -11,6 +11,9 @@ import com.flaao0.shoppinglist.domain.ShopItem
 
 class ShopItemAdapter : RecyclerView.Adapter<ShopItemAdapter.ShopItemViewHolder>() {
 
+    var onShopItemLongClickListener: ((shopItem: ShopItem) -> Unit)? = null
+    var onShopItemClickListener: ((shopItem: ShopItem) -> Unit)? = null
+
     var list = listOf<ShopItem>()
         set(value) {
             field = value
@@ -44,13 +47,19 @@ class ShopItemAdapter : RecyclerView.Adapter<ShopItemAdapter.ShopItemViewHolder>
         holder.textViewDescriptor.text = shopItem.name
         holder.textViewCount.text = shopItem.count.toString()
         holder.view.setOnLongClickListener {
+            onShopItemLongClickListener?.invoke(shopItem)
             true
+        }
+        holder.view.setOnClickListener {
+            onShopItemClickListener?.invoke(shopItem)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return if (list[position].condition) IS_ENABLED else IS_DISABLED
     }
+
+
 
     override fun getItemCount(): Int {
         return list.size
