@@ -55,8 +55,9 @@ class MainActivity : AppCompatActivity() {
                 ShopItemAdapter.MAX_POOL_SIZE
             )
         }
-        setupLongClickListener()
         setupClickListener()
+        setupLongClickListener()
+
 
         val itemTouchHelper = setupSwipeListener()
         itemTouchHelper.attachToRecyclerView(rvShopList)
