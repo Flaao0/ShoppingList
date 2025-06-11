@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
 import com.flaao0.shoppinglist.domain.ShopItem
@@ -16,8 +17,10 @@ class ShopItemAdapter : RecyclerView.Adapter<ShopItemAdapter.ShopItemViewHolder>
 
     var list = listOf<ShopItem>()
         set(value) {
+            val callback = ShopListDiffCallback(list, value)
+            val diffResult = DiffUtil.calculateDiff(callback)
+            diffResult.dispatchUpdatesTo(this)
             field = value
-            notifyDataSetChanged()
         }
 
     override fun onCreateViewHolder(
@@ -25,7 +28,7 @@ class ShopItemAdapter : RecyclerView.Adapter<ShopItemAdapter.ShopItemViewHolder>
         viewType: Int
     ): ShopItemViewHolder {
 
-        val layout = if (viewType > 0) {
+        val layout = if (viewType == 1) {
             R.layout.shop_item_enabled
         } else {
             R.layout.shop_item_disabled
