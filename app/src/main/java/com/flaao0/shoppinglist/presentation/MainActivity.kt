@@ -2,9 +2,6 @@ package com.flaao0.shoppinglist.presentation
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -13,8 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
-import com.flaao0.shoppinglist.domain.ShopItem
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
-            shopItemAdapter.list = it
+            shopItemAdapter.submitList(it)
         }
 
     }
@@ -82,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                 direction: Int
             ) {
                 val position = viewHolder.adapterPosition
-                val shopItem = shopItemAdapter.list[position]
+                val shopItem = shopItemAdapter.currentList[position]
                 viewModel.deleteShopItem(shopItem)
             }
         })

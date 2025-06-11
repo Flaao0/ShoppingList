@@ -1,6 +1,5 @@
 package com.flaao0.shoppinglist.presentation
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.flaao0.shoppinglist.data.ShopListRepositoryImpl
 import com.flaao0.shoppinglist.domain.DeleteShopItemUseCase

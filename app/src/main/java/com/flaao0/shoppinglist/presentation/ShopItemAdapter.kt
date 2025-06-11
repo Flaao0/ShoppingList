@@ -1,27 +1,17 @@
 package com.flaao0.shoppinglist.presentation
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.flaao0.shoppinglist.R
 import com.flaao0.shoppinglist.domain.ShopItem
 
-class ShopItemAdapter : RecyclerView.Adapter<ShopItemAdapter.ShopItemViewHolder>() {
+class ShopItemAdapter: ListAdapter<ShopItem, ShopItemViewHolder> (
+    ShopItemDiffCallback()
+) {
 
     var onShopItemLongClickListener: ((shopItem: ShopItem) -> Unit)? = null
     var onShopItemClickListener: ((shopItem: ShopItem) -> Unit)? = null
-
-    var list = listOf<ShopItem>()
-        set(value) {
-            val callback = ShopListDiffCallback(list, value)
-            val diffResult = DiffUtil.calculateDiff(callback)
-            diffResult.dispatchUpdatesTo(this)
-            field = value
-        }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -46,7 +36,7 @@ class ShopItemAdapter : RecyclerView.Adapter<ShopItemAdapter.ShopItemViewHolder>
         holder: ShopItemViewHolder,
         position: Int
     ) {
-        val shopItem = list[position]
+        val shopItem = getItem(position)
         holder.textViewDescriptor.text = shopItem.name
         holder.textViewCount.text = shopItem.count.toString()
         holder.view.setOnLongClickListener {
@@ -59,26 +49,12 @@ class ShopItemAdapter : RecyclerView.Adapter<ShopItemAdapter.ShopItemViewHolder>
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (list[position].condition) IS_ENABLED else IS_DISABLED
-    }
-
-
-
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
-    class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val textViewDescriptor: TextView = view.findViewById(R.id.textViewDescription)
-        val textViewCount: TextView = view.findViewById(R.id.textViewCount)
+        return if (getItem(position).condition) IS_ENABLED else IS_DISABLED
     }
 
     companion object {
-
         const val IS_ENABLED = 1
         const val IS_DISABLED = -1
-
         const val MAX_POOL_SIZE = 20
-
     }
 }
