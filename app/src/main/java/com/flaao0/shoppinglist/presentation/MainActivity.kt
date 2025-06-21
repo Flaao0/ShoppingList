@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
 import com.flaao0.shoppinglist.domain.ShopItem
@@ -34,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
-            Log.d("MainActivity1", it.toString())
             adapter.list = it
         }
 
@@ -45,7 +45,50 @@ class MainActivity : AppCompatActivity() {
         val rvShopList = findViewById<RecyclerView>(R.id.recyclerViewShopItem)
         adapter = ShopItemAdapter()
         rvShopList.adapter = adapter
+
+        adapter.onShopItemLongClickListener = {
+            viewModel.changeConditionShopItem(it)
+        }
+
+        adapter.onShopItemClickListener = {
+            Log.d("MainActivity1", it.toString())
+        }
+
+
+
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int
+            ) {
+                val shopItemPosition = viewHolder.adapterPosition
+                val shopItem = adapter.list[shopItemPosition]
+                viewModel.deleteShopItem(shopItem)
+            }
+        })
+
+        itemTouchHelper.attachToRecyclerView(rvShopList)
+
     }
 
 
+
 }
+
+
+
+
+
+
+
