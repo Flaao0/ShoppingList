@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.flaao0.shoppinglist.domain.ShopItem
 import com.flaao0.shoppinglist.domain.ShopListRepository
-import kotlin.random.Random
 
 object ShopListRepositoryImpl : ShopListRepository {
 
@@ -14,8 +13,8 @@ object ShopListRepositoryImpl : ShopListRepository {
     private var autoGenerateId = 0
 
     init {
-        for (i in 0 until 100) {
-            val shopItem = ShopItem("Name$i", i, Random.nextBoolean())
+        for (i in 0 until 10) {
+            val shopItem = ShopItem("Name$i", i, true)
             addShopItem(shopItem)
         }
     }
