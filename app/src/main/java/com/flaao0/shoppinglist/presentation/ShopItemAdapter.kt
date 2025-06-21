@@ -1,24 +1,13 @@
 package com.flaao0.shoppinglist.presentation
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.flaao0.shoppinglist.R
 import com.flaao0.shoppinglist.domain.ShopItem
 
-class ShopItemAdapter : RecyclerView.Adapter<ShopItemViewHolder>() {
-
-    var list = listOf<ShopItem>()
-        set(value) {
-            val callback = ShopListDiffCallback(list, value)
-            val diffResult = DiffUtil.calculateDiff(callback)
-            diffResult.dispatchUpdatesTo(this)
-            field = value
-        }
+class ShopItemAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
 
     var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
     var onShopItemClickListener: ((ShopItem) -> Unit)? = null
@@ -44,7 +33,7 @@ class ShopItemAdapter : RecyclerView.Adapter<ShopItemViewHolder>() {
         holder: ShopItemViewHolder,
         position: Int
     ) {
-        val shopItem = list[position]
+        val shopItem = getItem(position)
         holder.textViewDescriptor.text = shopItem.name
         holder.textViewCount.text = shopItem.count.toString()
         holder.view.setOnLongClickListener {
@@ -57,15 +46,11 @@ class ShopItemAdapter : RecyclerView.Adapter<ShopItemViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return  if (list[position].condition) {
+        return  if (getItem(position).condition) {
             VIEW_TYPE_ENABLED
         } else {
             VIEW_TYPE_DISABLED
         }
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
     }
 
     companion object {

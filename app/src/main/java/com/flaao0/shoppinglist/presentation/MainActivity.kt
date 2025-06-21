@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
-            adapter.list = it
+            adapter.submitList(it)
         }
 
 
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 direction: Int
             ) {
                 val shopItemPosition = viewHolder.adapterPosition
-                val shopItem = adapter.list[shopItemPosition]
+                val shopItem = adapter.currentList[shopItemPosition]
                 viewModel.deleteShopItem(shopItem)
             }
         })
