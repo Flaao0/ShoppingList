@@ -1,10 +1,6 @@
 package com.flaao0.shoppinglist.presentation
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -13,13 +9,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
-import com.flaao0.shoppinglist.domain.ShopItem
-import kotlin.math.log
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: ShopItemAdapter
+    private lateinit var button: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +34,11 @@ class MainActivity : AppCompatActivity() {
             adapter.submitList(it)
         }
 
+        button = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+        button.setOnClickListener {
+            val intent = ShopItemActivity.newAddIntent(this)
+            startActivity(intent)
+        }
 
     }
 
@@ -51,7 +52,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         adapter.onShopItemClickListener = {
-            Log.d("MainActivity1", it.toString())
+            val intent = ShopItemActivity.newEditIntent(this, it.id)
+            startActivity(intent)
         }
 
 

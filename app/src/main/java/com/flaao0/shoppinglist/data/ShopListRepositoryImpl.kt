@@ -14,7 +14,7 @@ object ShopListRepositoryImpl : ShopListRepository {
     private var autoGenerateId = 0
 
     init {
-        for (i in 0 until 30) {
+        for (i in 0 until 12) {
             val shopItem = ShopItem("Name$i", i, Random.nextBoolean())
             addShopItem(shopItem)
         }
