@@ -59,7 +59,7 @@ class ShopItemFragment(
 
     private fun observeViewModel() {
         viewModel.isClosing.observe(viewLifecycleOwner) {
-            finish()
+            activity?.onBackPressedDispatcher?.onBackPressed()
         }
     }
 
@@ -181,6 +181,14 @@ class ShopItemFragment(
         const val MODE_ADD = "mode_add"
         const val MODE_EDIT = "mode_edit"
         private const val MODE_UNKNOWN = ""
+
+        fun newInstanceAddItem(): ShopItemFragment {
+            return ShopItemFragment(MODE_ADD)
+        }
+
+        fun newInstanceEditItem(shopItemId: Int): ShopItemFragment {
+            return ShopItemFragment(MODE_EDIT, shopItemId)
+        }
 
 
         fun newAddIntent(context: Context): Intent {

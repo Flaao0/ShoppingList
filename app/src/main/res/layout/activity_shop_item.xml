@@ -3,6 +3,5 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:name="com.flaao0.shoppinglist.presentation.ShopItemFragment"
     tools:layout="@layout/fragment_shop_item"
     android:layout_height="match_parent"/>
