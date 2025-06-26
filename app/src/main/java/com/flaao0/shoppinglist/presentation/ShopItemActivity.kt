@@ -32,7 +32,9 @@ class ShopItemActivity : AppCompatActivity() {
             insets
         }
         parseIntent()
-        launchRightMode()
+        if (savedInstanceState == null) {
+            launchRightMode()
+        }
 
     }
 
@@ -44,7 +46,7 @@ class ShopItemActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.main, fragment)
+            .replace(R.id.main, fragment)
             .commit()
     }
 
