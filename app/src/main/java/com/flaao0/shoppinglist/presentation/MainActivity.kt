@@ -1,6 +1,7 @@
 package com.flaao0.shoppinglist.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -13,7 +14,7 @@ import com.flaao0.shoppinglist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.io.path.Path
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: ShopItemAdapter
@@ -51,6 +52,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_LONG).show()
+        supportFragmentManager.popBackStack()
     }
 
     private fun launchFragment(shopItemFragment: ShopItemFragment) {

@@ -1,8 +1,11 @@
 package com.flaao0.shoppinglist.presentation
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +20,8 @@ import com.google.android.material.textfield.TextInputLayout
 class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
     private lateinit var textInputLayoutName: TextInputLayout
     private lateinit var textInputLayoutCount: TextInputLayout
     private lateinit var textInputEditTextName: TextInputEditText
@@ -25,6 +30,18 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("TEST", "onAttach")
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException("Activity don't implement interface")
+        }
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +77,7 @@ class ShopItemFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.isClosing.observe(viewLifecycleOwner) {
-            activity?.onBackPressedDispatcher?.onBackPressed()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
 
@@ -182,6 +199,11 @@ class ShopItemFragment : Fragment() {
             shopItemId = args.getInt(SHOP_ITEM_ID, ShopItem.UNDEFINED_ID)
         }
     }
+
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
+    }
+
 
     companion object {
 
