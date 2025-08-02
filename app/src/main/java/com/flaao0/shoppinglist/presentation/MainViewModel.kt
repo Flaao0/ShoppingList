@@ -2,13 +2,13 @@ package com.flaao0.shoppinglist.presentation
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.flaao0.shoppinglist.data.ShopListRepositoryImpl
 import com.flaao0.shoppinglist.domain.DeleteShopItemUseCase
 import com.flaao0.shoppinglist.domain.EditShopItemUseCase
 import com.flaao0.shoppinglist.domain.GetShopItemListUseCase
 import com.flaao0.shoppinglist.domain.ShopItem
+import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -20,16 +20,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val shopList = getShopListUseCase.getShopList()
 
-
-
     fun deleteShopItem(shopItem: ShopItem) {
-        deleteShopItemUseCase.deleteShopItem(shopItem)
+        viewModelScope.launch {
+            deleteShopItemUseCase.deleteShopItem(shopItem)
+        }
     }
 
     fun changeConditionShopItem(shopItem: ShopItem) {
-        val newShopItem = shopItem.copy(condition = !shopItem.condition)
-        editShopItemUseCase.editShopItem(newShopItem)
+        viewModelScope.launch {
+            val newShopItem = shopItem.copy(condition = !shopItem.condition)
+            editShopItemUseCase.editShopItem(newShopItem)
+        }
     }
-
-
 }
