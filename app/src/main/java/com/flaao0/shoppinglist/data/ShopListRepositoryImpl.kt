@@ -1,8 +1,10 @@
 package com.flaao0.shoppinglist.data
 
 import android.app.Application
+import android.view.animation.Transformation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.flaao0.shoppinglist.domain.ShopItem
 import com.flaao0.shoppinglist.domain.ShopListRepository
 import kotlin.random.Random
@@ -14,8 +16,8 @@ class ShopListRepositoryImpl(
     private val shopListDao = AppDatabase.getInstance(application).shopListDao()
     private val mapper = ShopListMapper()
 
-    override fun getShopList(): LiveData<List<ShopItem>> {
-        return shopListDao.getShopList()
+    override fun getShopList(): LiveData<List<ShopItem>> = shopListDao.getShopList().map {
+        mapper.mapListDbModelToListEntity(it)
     }
 
     override fun addShopItem(shopItem: ShopItem) {
