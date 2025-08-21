@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.inject.Inject
 import kotlin.io.path.Path
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
@@ -21,7 +22,15 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     private lateinit var button: FloatingActionButton
     private var fragmentContainer: FragmentContainerView? = null
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    val component by lazy {
+        (application as ShopApp).component
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -34,7 +43,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         fragmentContainer = findViewById(R.id.fragment_container_view)
 
 
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
             adapter.submitList(it)

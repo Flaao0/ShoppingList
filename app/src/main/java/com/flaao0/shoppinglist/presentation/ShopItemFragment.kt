@@ -15,10 +15,15 @@ import com.flaao0.shoppinglist.R
 import com.flaao0.shoppinglist.domain.ShopItem
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
 
     private lateinit var viewModel: ShopItemViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     private lateinit var textInputLayoutName: TextInputLayout
@@ -29,6 +34,10 @@ class ShopItemFragment : Fragment() {
 
     private var screenMode: String = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    val component by lazy {
+        (requireActivity().application as ShopApp).component
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,6 +62,7 @@ class ShopItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        component.inject(this)
         Log.d("TEST12", "onCreateView")
         return inflater.inflate(
             R.layout.fragment_shop_item,
@@ -65,7 +75,7 @@ class ShopItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d("TEST12", "onViewCreated")
         initViews(view)
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         launchRightMode()
         observeViewModel()
     }

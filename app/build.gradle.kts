@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+    id("kotlin-kapt")
 }
 
 android {
@@ -59,5 +60,8 @@ dependencies {
     ksp(libs.room.compiler)
 // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.room.ktx)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
+    implementation("com.google.dagger:dagger:2.57")
+    kapt("com.google.dagger:dagger-compiler:2.57")
 }

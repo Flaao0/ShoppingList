@@ -1,8 +1,9 @@
 package com.flaao0.shoppinglist.data
 
 import com.flaao0.shoppinglist.domain.ShopItem
+import javax.inject.Inject
 
-class ShopListMapper {
+class ShopListMapper @Inject constructor() {
 
     fun mapEntityToDbModel(shopItem: ShopItem): ShopItemDbModel {
         return ShopItemDbModel(

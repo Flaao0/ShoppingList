@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flaao0.shoppinglist.data.ShopListRepositoryImpl
 import com.flaao0.shoppinglist.domain.AddShopItemUseCase
@@ -11,14 +12,13 @@ import com.flaao0.shoppinglist.domain.EditShopItemUseCase
 import com.flaao0.shoppinglist.domain.GetShopItemByIdUseCase
 import com.flaao0.shoppinglist.domain.ShopItem
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ShopItemViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = ShopListRepositoryImpl(application)
-
-    private val addShopItemUseCase = AddShopItemUseCase(repository)
-    private val editShopItemUseCase = EditShopItemUseCase(repository)
-    private val getShopItemByIdUseCase = GetShopItemByIdUseCase(repository)
+class ShopItemViewModel @Inject constructor(
+    private val addShopItemUseCase: AddShopItemUseCase,
+    private val editShopItemUseCase: EditShopItemUseCase,
+    private val getShopItemByIdUseCase: GetShopItemByIdUseCase,
+    ) : ViewModel() {
 
     private val _isClosing = MutableLiveData<Unit>()
     val isClosing: LiveData<Unit>

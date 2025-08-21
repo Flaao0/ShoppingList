@@ -1,20 +1,17 @@
 package com.flaao0.shoppinglist.data
 
 import android.app.Application
-import android.view.animation.Transformation
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.flaao0.shoppinglist.domain.ShopItem
 import com.flaao0.shoppinglist.domain.ShopListRepository
-import kotlin.random.Random
+import javax.inject.Inject
 
-class ShopListRepositoryImpl(
-    application: Application
+class ShopListRepositoryImpl @Inject constructor(
+    application: Application,
+    private val mapper: ShopListMapper,
+    private val shopListDao: ShopListDao
 ) : ShopListRepository {
-
-    private val shopListDao = AppDatabase.getInstance(application).shopListDao()
-    private val mapper = ShopListMapper()
 
     override fun getShopList(): LiveData<List<ShopItem>> = shopListDao.getShopList().map {
         mapper.mapListDbModelToListEntity(it)
