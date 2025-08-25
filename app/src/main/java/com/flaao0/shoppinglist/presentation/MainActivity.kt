@@ -1,5 +1,6 @@
 package com.flaao0.shoppinglist.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +15,7 @@ import com.flaao0.shoppinglist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 import kotlin.io.path.Path
+import androidx.core.net.toUri
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -60,6 +62,14 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
 
         }
+        contentResolver.query(
+            "content://com.flaao0.shoppinglist/shop_items".toUri(),
+            null,
+            null,
+            null,
+            null,
+            null
+        )
 
     }
 
@@ -105,14 +115,14 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
+                target: RecyclerView.ViewHolder,
             ): Boolean {
                 return false
             }
 
             override fun onSwiped(
                 viewHolder: RecyclerView.ViewHolder,
-                direction: Int
+                direction: Int,
             ) {
                 val shopItemPosition = viewHolder.adapterPosition
                 val shopItem = adapter.currentList[shopItemPosition]
