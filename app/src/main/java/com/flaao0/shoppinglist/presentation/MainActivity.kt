@@ -89,7 +89,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                 Log.d("MainActivity1", shopItem.toString())
             }
             cursor?.close()
-
         }
 
 

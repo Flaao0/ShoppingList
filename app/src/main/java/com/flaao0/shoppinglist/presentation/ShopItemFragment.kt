@@ -1,5 +1,6 @@
 package com.flaao0.shoppinglist.presentation
 
+import android.content.ContentValues
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.flaao0.shoppinglist.R
@@ -16,6 +18,7 @@ import com.flaao0.shoppinglist.domain.ShopItem
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
 
@@ -134,7 +137,23 @@ class ShopItemFragment : Fragment() {
             val count = textInputEditTextCount.text.toString()
             errorInputName()
             errorInputCount()
-            viewModel.addShopItem(name, count)
+
+            thread {
+                context?.contentResolver?.insert(
+                    "content://com.flaao0.shoppinglist/shop_items".toUri(),
+                    ContentValues().apply {
+                        put(KEY_ID, 0)
+                        put(KEY_NAME, name)
+                        put(KEY_COUNT, count)
+                        put(KEY_CONDITION, true)
+                    }
+                )
+            }
+
+
+//            viewModel.addShopItem(name, count)
+
+
         }
 
     }
@@ -259,6 +278,12 @@ class ShopItemFragment : Fragment() {
         const val MODE_ADD = "mode_add"
         const val MODE_EDIT = "mode_edit"
         private const val MODE_UNKNOWN = ""
+
+
+        const val KEY_ID = "id"
+        const val KEY_NAME = "name"
+        const val KEY_COUNT = "count"
+        const val KEY_CONDITION = "condition"
 
         fun newInstanceAddItem(): ShopItemFragment {
             return ShopItemFragment().apply {

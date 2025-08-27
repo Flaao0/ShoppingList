@@ -5,7 +5,6 @@ import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
-import android.util.Log
 import com.flaao0.shoppinglist.presentation.ShopApp
 import javax.inject.Inject
 
@@ -51,7 +50,21 @@ class ShopListProvider: ContentProvider() {
         uri: Uri,
         values: ContentValues?,
     ): Uri? {
-        TODO("Not yet implemented")
+        when(uriMatcher.match(uri)) {
+            GET_SHOP_ITEMS_QUERY -> {
+                if (values == null) return null
+                val id = values.getAsInteger(KEY_ID)
+                val name = values.getAsString(KEY_NAME)
+                val count = values.getAsInteger(KEY_COUNT)
+                val condition = values.getAsBoolean(KEY_CONDITION)
+
+                val shopItem = ShopItemDbModel(
+                    id = id, name = name, count = count, condition = condition
+                )
+                shopListDao.addShopItemSync(shopItem)
+            }
+        }
+        return null
     }
 
     override fun delete(
@@ -74,5 +87,10 @@ class ShopListProvider: ContentProvider() {
     companion object {
 
         private const val GET_SHOP_ITEMS_QUERY = 444
+
+        const val KEY_ID = "id"
+        const val KEY_NAME = "name"
+        const val KEY_COUNT = "count"
+        const val KEY_CONDITION = "condition"
     }
 }
