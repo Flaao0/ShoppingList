@@ -2,6 +2,7 @@ package com.flaao0.shoppinglist.presentation
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 import kotlin.io.path.Path
 import androidx.core.net.toUri
+import com.flaao0.shoppinglist.domain.ShopItem
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -62,14 +65,33 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
 
         }
-        contentResolver.query(
-            "content://com.flaao0.shoppinglist/shop_items".toUri(),
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        thread {
+            val cursor = contentResolver.query(
+                "content://com.flaao0.shoppinglist/shop_items".toUri(),
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+
+            while (cursor?.moveToNext() == true) {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                val condition = cursor.getInt(cursor.getColumnIndexOrThrow("condition")) > 0
+                val shopItem = ShopItem(
+                    name = name,
+                    count = count,
+                    condition = condition,
+                    id = id
+                )
+                Log.d("MainActivity1", shopItem.toString())
+            }
+            cursor?.close()
+
+        }
+
 
     }
 
@@ -107,7 +129,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         }
 
 
-
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -133,7 +154,6 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         itemTouchHelper.attachToRecyclerView(rvShopList)
 
     }
-
 
 
 }
