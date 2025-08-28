@@ -146,20 +146,17 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             ) {
                 val shopItemPosition = viewHolder.adapterPosition
                 val shopItem = adapter.currentList[shopItemPosition]
-                viewModel.deleteShopItem(shopItem)
+//                viewModel.deleteShopItem(shopItem)
+
+                thread {
+                    contentResolver?.delete(
+                        "content://com.flaao0.shoppinglist/shop_items".toUri(),
+                        null,
+                        arrayOf(shopItem.id.toString())
+                    )
+                }
             }
         })
-
         itemTouchHelper.attachToRecyclerView(rvShopList)
-
     }
-
-
 }
-
-
-
-
-
-
-
