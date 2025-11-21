@@ -1,32 +1,32 @@
 package com.flaao0.shoppinglist.presentation
 
 import androidx.lifecycle.ViewModel
-import com.flaao0.shoppinglist.data.ShopListRepositoryImpl
+import androidx.lifecycle.viewModelScope
 import com.flaao0.shoppinglist.domain.DeleteShopItemUseCase
 import com.flaao0.shoppinglist.domain.EditShopItemUseCase
 import com.flaao0.shoppinglist.domain.GetShopItemListUseCase
 import com.flaao0.shoppinglist.domain.ShopItem
+import kotlinx.coroutines.launch
+import jakarta.inject.Inject // Изменено с javax.inject.Inject
 
-class MainViewModel : ViewModel() {
-
-    private val repository = ShopListRepositoryImpl
-
-    private val getShopListUseCase = GetShopItemListUseCase(repository)
-    private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
-    private val editShopItemUseCase = EditShopItemUseCase(repository)
+class MainViewModel @Inject constructor(
+    private val getShopListUseCase: GetShopItemListUseCase,
+    private val deleteShopItemUseCase: DeleteShopItemUseCase,
+    private val editShopItemUseCase: EditShopItemUseCase,
+) : ViewModel() {
 
     val shopList = getShopListUseCase.getShopList()
 
-
-
     fun deleteShopItem(shopItem: ShopItem) {
-        deleteShopItemUseCase.deleteShopItem(shopItem)
+        viewModelScope.launch {
+            deleteShopItemUseCase.deleteShopItem(shopItem)
+        }
     }
 
     fun changeConditionShopItem(shopItem: ShopItem) {
-        val newShopItem = shopItem.copy(condition = !shopItem.condition)
-        editShopItemUseCase.editShopItem(newShopItem)
+        viewModelScope.launch {
+            val newShopItem = shopItem.copy(condition = !shopItem.condition)
+            editShopItemUseCase.editShopItem(newShopItem)
+        }
     }
-
-
 }

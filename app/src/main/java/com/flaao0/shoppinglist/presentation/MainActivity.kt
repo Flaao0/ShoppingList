@@ -1,22 +1,36 @@
 package com.flaao0.shoppinglist.presentation
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.inject.Inject
+import kotlin.io.path.Path
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var shopItemAdapter: ShopItemAdapter
+    private lateinit var adapter: ShopItemAdapter
+    private lateinit var button: FloatingActionButton
+    private var fragmentContainer: FragmentContainerView? = null
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    val component by lazy {
+        (application as ShopApp).component
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -26,40 +40,64 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         setupRecyclerView()
+        fragmentContainer = findViewById(R.id.fragment_container_view)
 
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
         viewModel.shopList.observe(this) {
-            shopItemAdapter.submitList(it)
+            adapter.submitList(it)
+        }
+
+        button = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+        button.setOnClickListener {
+            if (fragmentContainer != null) {
+                val fragment = ShopItemFragment.newInstanceAddItem()
+                launchFragment(fragment)
+            } else {
+                val intent = ShopItemActivity.newAddIntent(this)
+                startActivity(intent)
+            }
+
         }
 
     }
 
+    override fun onEditingFinished() {
+        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_LONG).show()
+        supportFragmentManager.popBackStack()
+    }
+
+    private fun launchFragment(shopItemFragment: ShopItemFragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container_view, shopItemFragment)
+            .addToBackStack(null)
+            .commit()
+    }
 
     private fun setupRecyclerView() {
         val rvShopList = findViewById<RecyclerView>(R.id.recyclerViewShopItem)
-        with(rvShopList) {
-            shopItemAdapter = ShopItemAdapter()
-            adapter = shopItemAdapter
-            recycledViewPool.setMaxRecycledViews(
-                ShopItemAdapter.IS_ENABLED,
-                ShopItemAdapter.MAX_POOL_SIZE
-            )
-            recycledViewPool.setMaxRecycledViews(
-                ShopItemAdapter.IS_DISABLED,
-                ShopItemAdapter.MAX_POOL_SIZE
-            )
+        adapter = ShopItemAdapter()
+        rvShopList.adapter = adapter
+
+        adapter.onShopItemLongClickListener = {
+            viewModel.changeConditionShopItem(it)
         }
-        setupClickListener()
-        setupLongClickListener()
+
+        adapter.onShopItemClickListener = {
+            if (fragmentContainer != null) {
+                val fragmentEdit = ShopItemFragment.newInstanceEditItem(it.id)
+                launchFragment(fragmentEdit)
+            } else {
+                val intent = ShopItemActivity.newEditIntent(this, it.id)
+                startActivity(intent)
+            }
+
+        }
 
 
-        val itemTouchHelper = setupSwipeListener()
-        itemTouchHelper.attachToRecyclerView(rvShopList)
 
-    }
-
-    private fun setupSwipeListener(): ItemTouchHelper {
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
@@ -76,25 +114,23 @@ class MainActivity : AppCompatActivity() {
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) {
-                val position = viewHolder.adapterPosition
-                val shopItem = shopItemAdapter.currentList[position]
+                val shopItemPosition = viewHolder.adapterPosition
+                val shopItem = adapter.currentList[shopItemPosition]
                 viewModel.deleteShopItem(shopItem)
             }
         })
-        return itemTouchHelper
+
+        itemTouchHelper.attachToRecyclerView(rvShopList)
+
     }
 
-    private fun setupClickListener() {
-        shopItemAdapter.onShopItemClickListener = {
-            Log.d("MainActivity1", it.toString())
-        }
-    }
-
-    private fun setupLongClickListener() {
-        shopItemAdapter.onShopItemLongClickListener = {
-            viewModel.changeConditionShopItem(it)
-        }
-    }
 
 
 }
+
+
+
+
+
+
+

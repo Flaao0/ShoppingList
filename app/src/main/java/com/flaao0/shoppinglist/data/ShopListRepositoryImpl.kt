@@ -1,53 +1,35 @@
 package com.flaao0.shoppinglist.data
 
+import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.flaao0.shoppinglist.domain.ShopItem
 import com.flaao0.shoppinglist.domain.ShopListRepository
-import kotlin.random.Random
+import javax.inject.Inject
 
-object ShopListRepositoryImpl : ShopListRepository {
+class ShopListRepositoryImpl @Inject constructor(
+    application: Application,
+    private val mapper: ShopListMapper,
+    private val shopListDao: ShopListDao
+) : ShopListRepository {
 
-    private val shopList = sortedSetOf<ShopItem>({o1, o2 -> o1.id.compareTo(o2.id) })
-    private val shopListLD = MutableLiveData<List<ShopItem>>()
-
-    private var autoGenerateId = 0
-
-    init {
-        for (i in 0 until 100) {
-            val shopItem = ShopItem("Name$i", i, Random.nextBoolean())
-            addShopItem(shopItem)
-        }
+    override fun getShopList(): LiveData<List<ShopItem>> = shopListDao.getShopList().map {
+        mapper.mapListDbModelToListEntity(it)
     }
 
-    override fun getShopList(): LiveData<List<ShopItem>> {
-        return shopListLD
+    override suspend fun addShopItem(shopItem: ShopItem) {
+        shopListDao.addShopItem(mapper.mapEntityToDbModel(shopItem))
     }
 
-    override fun addShopItem(shopItem: ShopItem) {
-        if (shopItem.id == ShopItem.UNDEFINED_ID) {
-            shopItem.id = autoGenerateId++
-        }
-        shopList.add(shopItem)
-        shopListLD.value = shopList.toList()
+    override suspend fun deleteShopItem(shopItem: ShopItem) {
+        shopListDao.deleteShopItem(shopItem.id)
     }
 
-    override fun deleteShopItem(shopItem: ShopItem) {
-        shopList.remove(shopItem)
-        shopListLD.value = shopList.toList()
+    override suspend fun getShopItemById(id: Int): ShopItem {
+         return mapper.mapDbModelToEntity(shopListDao.getShopItem(id))
     }
 
-    override fun getShopItemById(id: Int): ShopItem {
-         val shopItem = shopList.find {
-            it.id == id
-        } ?: throw NullPointerException("Element id = null1")
-        return shopItem
-    }
-
-    override fun editShopItem(shopItem: ShopItem) {
-        val oldShopItem = getShopItemById(shopItem.id)
-        shopList.remove(oldShopItem)
-        shopList.add(shopItem)
-        shopListLD.value = shopList.toList()
+    override suspend fun editShopItem(shopItem: ShopItem) {
+        shopListDao.addShopItem(mapper.mapEntityToDbModel(shopItem))
     }
 }
