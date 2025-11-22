@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.flaao0.shoppinglist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
-import kotlin.io.path.Path
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -64,7 +63,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     override fun onEditingFinished() {
-        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_LONG).show()
+        Toast.makeText(this@MainActivity, getString(R.string.success_item_saved), Toast.LENGTH_SHORT).show()
         supportFragmentManager.popBackStack()
     }
 

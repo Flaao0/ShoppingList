@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +40,6 @@ class ShopItemFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.d("TEST12", "onAttach")
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
         } else {
@@ -53,7 +51,6 @@ class ShopItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("TEST12", "onCreate")
         parseParams()
     }
 
@@ -63,7 +60,6 @@ class ShopItemFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         component.inject(this)
-        Log.d("TEST12", "onCreateView")
         return inflater.inflate(
             R.layout.fragment_shop_item,
             container,
@@ -73,7 +69,6 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("TEST12", "onViewCreated")
         initViews(view)
         viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         launchRightMode()
@@ -82,37 +77,30 @@ class ShopItemFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Log.d("TEST12", "onStart")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d("TEST12", "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("TEST12", "onPause")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d("TEST12", "onStop")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("TEST12", "onDestroyView")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("TEST12", "onDestroy")
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.d("TEST12", "onDetach")
     }
 
     private fun launchRightMode() {
@@ -160,7 +148,7 @@ class ShopItemFragment : Fragment() {
     private fun errorInputName() {
         viewModel.errorInputName.observe(viewLifecycleOwner) {
             if (it) {
-                textInputLayoutName.error = "error name"
+                textInputLayoutName.error = getString(R.string.error_name_required)
                 textInputEditTextName.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(
                         s: CharSequence?,
@@ -192,7 +180,7 @@ class ShopItemFragment : Fragment() {
     private fun errorInputCount() {
         viewModel.errorInputCount.observe(viewLifecycleOwner) {
             if (it) {
-                textInputLayoutCount.error = "error count"
+                textInputLayoutCount.error = getString(R.string.error_count_invalid)
 
                 textInputEditTextCount.addTextChangedListener(object : TextWatcher {
                     override fun beforeTextChanged(
